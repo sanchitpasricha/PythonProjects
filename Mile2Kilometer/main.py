@@ -1,22 +1,34 @@
 from tkinter import *
 
-def button_click():
-    user_input = input.get()
-    label.config(text=user_input)
+
+def calculate_on_click():
+    miles = int(input_column.get())
+    km = miles * 1.60
+    km = str(km)
+    output_text.config(text=km)
 
 
 window = Tk()
-window.title("Mile To Kilometer Converter")
-window.minsize(width=500, height=300)
+window.minsize(width=300, height=200)
+window.title('Mile to Km Converter')
+window.config(padx=50, pady=50)
 
-label = Label(text="I am a label", font=("Arial", 24, "bold"))
-label.pack(expand=True)
+input_column = Entry(width=10)
+input_column.grid(row=0, column=1)
 
+miles_label = Label(text="Miles")
+miles_label.grid(row=0, column=2)
 
-input = Entry(width=10)
-input.pack()
+equal_text = Label(text="is equals to")
+equal_text.grid(row=1, column=0)
 
-button = Button(text="Click me", command=button_click)
-button.pack()
+output_text = Label(text="0")
+output_text.grid(row=1, column=1)
+
+km_text = Label(text='KM')
+km_text.grid(row=1, column=2)
+
+button = Button(text="Calculate", command=calculate_on_click)
+button.grid(row=2, column=1)
 
 window.mainloop()
