@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from random import choice, randint, shuffle
 import pyperclip
+import json
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
@@ -26,11 +27,19 @@ def generate_password():
     pyperclip.copy(password)
     messagebox.showinfo(title='Clipboard', message='Password Copied to Clipboard !')
 
+
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def save_in_file():
     web = web_entry.get()
     email = mail_entry.get()
     password = pass_entry.get()
+
+    new_data = {
+        web: {
+            "email": email,
+            "password": password,
+        }
+    }
 
     if len(web) == 0 and len(password) == 0:
         messagebox.askokcancel(title='Empty Fields', message="You have left email or password field empty")
@@ -39,10 +48,31 @@ def save_in_file():
                                        message=f'Please check the details:\nEmail:{email}\nPassword:{password}\n'
                                                f'Press ok to confirm')
         if is_ok:
-            with open('data.txt', 'a') as data:
-                data.write(f'{web} | {email} | {password} \n')
+            try:
+                with open('data.json', 'r') as data:
+                    changed_data = json.load(data)
+                    changed_data.update(new_data)
+            except FileNotFoundError:
+                with open('data.json', 'w') as data:
+                    json.dump(new_data, data, indent=4)
+            else:
+                with open('data.json', 'w') as data:
+                    json.dump(changed_data, data, indent=4)
+
         web_entry.delete(0, END)
         pass_entry.delete(0, END)
+
+
+# ------------------------ FIND PASSWORD ------------------------------ #
+def find_password():
+    web = web_entry.get()
+    with open('data.json', 'r') as data_file:
+        keys = json.load(data_file)
+        try:
+            messagebox.askokcancel(title=web, message=f'Email:{keys[web]["email"]}\nPassword:{keys[web]["password"]}')
+        except KeyError:
+            messagebox.askokcancel(title='Not Exist', message='The password you are searching for does not exist. '
+                                                              'Generate instead')
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -55,12 +85,15 @@ lock_image = PhotoImage(file='logo.png')
 canvas.create_image(100, 100, image=lock_image)
 canvas.grid(row=0, column=1)
 
-webite_label = Label(text="Website:", bg='white', fg='black')
-webite_label.grid(row=1, column=0)
+website_label = Label(text="Website:", bg='white', fg='black')
+website_label.grid(row=1, column=0)
 
-web_entry = Entry(width=35, bg='white', highlightthickness=0, fg='black')
+web_entry = Entry(width=20, bg='white', highlightthickness=0, fg='black')
 web_entry.focus()
-web_entry.grid(row=1, column=1, columnspan=2)
+web_entry.grid(row=1, column=1)
+
+search_button = Button(text='Search', width=10, highlightbackground='white', command=find_password)
+search_button.grid(row=1, column=2)
 
 mail_label = Label(text="Email/Username:", bg='white', fg='black')
 mail_label.grid(row=2, column=0)
