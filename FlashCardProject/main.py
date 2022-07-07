@@ -4,6 +4,7 @@ import random
 
 BACKGROUND_COLOR = "#B1DDC6"
 random_card = {}
+
 # --------------------------------RANDOM WORD GENERATOR------------------------------------- #
 data = pandas.read_csv('data/french_words.csv')
 learn = data.to_dict(orient='records')
@@ -20,7 +21,6 @@ def next_card():
     canvas.itemconfig(canvas_image, image=card_image)
     flip_timer = window.after(3000, func=flip_card)
 
-
 # ---------------------------------FLIP THE CARD-------------------------------------------- #
 def flip_card():
     canvas.itemconfig(card_head, text='English', fill='white')
@@ -34,7 +34,6 @@ window = Tk()
 window.title('Flashy')
 window.config(padx=50, pady=50, bg=BACKGROUND_COLOR)
 
-window.after(3000, func=flip_card)
 flip_timer = window.after(3000, func=flip_card)
 
 canvas = Canvas(height=526, width=800, bg=BACKGROUND_COLOR, highlightthickness=0)
